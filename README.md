@@ -22,8 +22,8 @@ This tool implements the Knuth-Morris-Pratt (KMP) and Aho-Corasick algorithms fo
 
 1. Clone the repository:
    ```
-   git clone [your repository]
-   cd [directory where the clone is stored]
+   git clone git@github.com:anwarrizal/termachick.git
+   cd termachick
    ```
 
 ## Usage
@@ -39,13 +39,13 @@ Build a DFA from patterns and save it to a file for later use:
 
 ```bash
 # Build an Aho-Corasick DFA from command-line patterns
-python mpattern.py strbuild --patterns ABABC BCDEF DEFGH -o patterns.dfa
+python tchick.py strbuild --patterns ABABC BCDEF DEFGH -o patterns.dfa
 
 # Build a KMP DFA from a single pattern
-python mpattern.py strbuild --patterns ABABC -a kmp -o kmp_pattern.dfa
+python tchick.py strbuild --patterns ABABC -a kmp -o kmp_pattern.dfa
 
 # Build a DFA from patterns in a file (one pattern per line)
-python mpattern.py strbuild --patterns-file dna_patterns.txt -o dna.dfa
+python tchick.py strbuild --patterns-file dna_patterns.txt -o dna.dfa
 ```
 
 ### Searching for Patterns
@@ -54,19 +54,19 @@ Search for patterns in text using various input methods:
 
 ```bash
 # Search using patterns directly with text from a file
-python mpattern.py strsearch --patterns ABABC BCDEF -f genome.txt
+python tchick.py strsearch --patterns ABABC BCDEF -f genome.txt
 
 # Search using patterns with text provided directly as an argument
-python mpattern.py strsearch --patterns ABABC BCDEF -t "ABABCDEFABABC"
+python tchick.py strsearch --patterns ABABC BCDEF -t "ABABCDEFABABC"
 
 # Search using patterns from a file with CSV output
-python mpattern.py strsearch --patterns-file proteins.txt -f sequence.txt --output-format csv
+python tchick.py strsearch --patterns-file proteins.txt -f sequence.txt --output-format csv
 
 # Search using a pre-built DFA and save results to a file
-python mpattern.py strsearch --dfa-file patterns.dfa -f input.txt --output-file results.csv --output-format csv
+python tchick.py strsearch --dfa-file patterns.dfa -f input.txt --output-file results.csv --output-format csv
 
 # Search from stdin and save the DFA for later use
-cat input.txt | python mpattern.py strsearch --patterns ABABC BCDEF --save-dfa patterns.dfa
+cat input.txt | python tchick.py strsearch --patterns ABABC BCDEF --save-dfa patterns.dfa
 ```
 
 ## Command Reference
@@ -76,7 +76,7 @@ cat input.txt | python mpattern.py strsearch --patterns ABABC BCDEF --save-dfa p
 Build a string pattern DFA and save it to a file.
 
 ```
-python mpattern.py strbuild [options]
+python tchick.py strbuild [options]
 ```
 
 Options:
@@ -92,7 +92,7 @@ Options:
 Search for string patterns in text.
 
 ```
-python mpattern.py strsearch [options]
+python tchick.py strsearch [options]
 ```
 
 Pattern options (one required):
@@ -143,7 +143,7 @@ Build a DFA and search for these patterns in a genome file:
 
 ```bash
 # Build the DFA
-python mpattern.py strbuild --patterns-file dna_patterns.txt -o dna.dfa
+python tchick.py strbuild --patterns-file dna_patterns.txt -o dna.dfa
 
 ```
 
