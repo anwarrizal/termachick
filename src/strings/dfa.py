@@ -87,7 +87,9 @@ class DFA:
         """Performs a breadth-first traversal of the DFA starting from the initial state.
 
         Yields:
-            State: Each state in BFS order
+            State: Parent state in BFS order
+            str: The transition
+            State: The current state
 
         Raises:
             ValueError: If DFA has no initial state

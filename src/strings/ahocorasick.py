@@ -52,7 +52,7 @@ def precompute_possible_transitions(
             is not defined.
     """
     for a in alphabet_set:
-        if dfa.transition(index, a) is None:
+        if not dfa.has_transition(index, a):
             if (to_state := dfa.transition(fail_functions[index - 1], a)) is None:
                 raise ValueError(f"Invalid transition from {index} with {a}")
             dfa.add_transition(index, a, to_state, TransitionType.FAILURE)
@@ -98,9 +98,11 @@ class AhoCorasickMatcher:
         dfa.add_state(is_accepting=False, is_initial=True)
 
         # Build trie structure by adding each pattern and store the pattern for each state
-        pattern_map = {}
+        pattern_map = {0: ""}
+
         for pattern in patterns:
-            pattern_map.update(self._add_pattern(dfa, pattern))
+            pmap = self._add_pattern(dfa, pattern)
+            pattern_map.update(pmap)
 
         # Initialize failure transitions for the root state
         self._initialize_root(alphabets=alphabets, dfa=dfa)
@@ -120,7 +122,8 @@ class AhoCorasickMatcher:
         if dfa.initial_state is None:
             raise ValueError("DFA has no initial state")
         state = dfa.initial_state
-        pattern_map = {0: ""}
+        pattern_map = {}
+
 
         # Try to follow existing transitions in the DFA for the current pattern
         i = 0
@@ -173,7 +176,7 @@ class AhoCorasickMatcher:
         """
         if self.compute_transitions:
             for a in alphabets:
-                if dfa.transition(0, a) is None:
+                if not dfa.has_transition(0, a):
                     dfa.add_transition(
                         from_state=0,
                         to_state=0,
@@ -237,7 +240,6 @@ class AhoCorasickMatcher:
 
         # Process each state in breadth-first order to build failure functions and transitions
         for parent, sym, index in list(dfa.bfs_traverse()):
-
             if parent == 0:
                 # Special handling for states directly connected to root
                 self._initialize_top_level(sym, index, alphabet_set, dfa)
@@ -256,11 +258,11 @@ class AhoCorasickMatcher:
         self.dfa = dfa
         self.pattern_map = pattern_map
 
-    def search(self, s: str) -> Generator[tuple[int, str]]:
+    def search(self, text: str) -> Generator[tuple[int, str]]:
         """Search for all occurrences of patterns in the input text.
 
         Args:
-            s (str): The input text to search through.
+            text (str): The input text to search through.
 
         Yields:
             tuple[int, str]: A tuple containing:
@@ -275,7 +277,7 @@ class AhoCorasickMatcher:
         state = 0
         if self.compute_transitions:
             # All transitions are pre-computed, allowing direct state transitions
-            for index, sym in enumerate(s):
+            for index, sym in enumerate(text):
                 if (new_state := self.dfa.transition(state, sym)) is None:
                     raise ValueError("Error in DFA definition")
                 state = new_state
@@ -285,7 +287,7 @@ class AhoCorasickMatcher:
                     yield (index - len(pattern) + 1), pattern
         else:
             # Compute transitions on-the-fly using failure functions
-            for index, sym in enumerate(s):
+            for index, sym in enumerate(text):
                 if (new_state := self.dfa.transition(state, sym)) is not None:
                     state = new_state
                 else:
@@ -308,7 +310,7 @@ class AhoCorasickMatcher:
                         fail_functions_index = self.fail_functions[fail_functions_index]
 
                     # Cache the computed transition for future use
-                    if self.dfa.transition(state, sym) is None:
+                    if not self.dfa.has_transition(state, sym):
                         self.dfa.add_transition(
                             state,
                             symbol=sym,

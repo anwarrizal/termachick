@@ -197,6 +197,7 @@ def search_with_patterns(
 
         return list(kmp_matcher.search(text))
 
+    # else: AC
     # Create new matcher
     ac_matcher = AhoCorasickMatcher(
         patterns=patterns, compute_transitions=precompute, alphabets=alphabet
@@ -217,7 +218,7 @@ def search_with_patterns(
 
         print(f"Saved Aho-Corasick DFA to {save_dfa}")
 
-    # Perform the search
+    # Perform the Aho-Corasick search
     return list(ac_matcher.search(text))
 
 

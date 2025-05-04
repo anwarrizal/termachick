@@ -77,7 +77,8 @@ class KMPMatcher:
 
     Attributes:
         compute_transitions (bool): Whether to precompute all state transitions
-        fail_functions (list[int]): Array storing failure function values. The index corresponds to the state.
+        fail_functions (list[int]): Array storing failure function values. The index corresponds to the state - 1,
+             because there is no fail_functions for 0th state.
         dfa (DFA): Deterministic finite automaton for pattern matching
 
     Args:
@@ -159,7 +160,7 @@ class KMPMatcher:
             if compute_transitions:
                 # set the transitions
                 for a in alphabet_set:
-                    if not dfa.transition(index, a):
+                    if not dfa.has_transition(index, a):
                         to_state = dfa.transition(fail_functions[index - 1], a) or 0
                         dfa.add_transition(
                             index, a, to_state, transition_type=TransitionType.FAILURE
